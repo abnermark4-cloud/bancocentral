@@ -21,6 +21,24 @@
             }
         }
     </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1305838618171369');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=1305838618171369&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 </head>
 <body class="bg-slate-100 min-h-screen flex flex-col justify-between font-sans text-base antialiased" onload="carregarDepoimentosDinamicos()">
 
@@ -493,6 +511,11 @@
         }
 
         function direcionarWhatsApp() {
+            // Dispara o evento de Purchase (Compra) no Pixel do Facebook sem valor fixo
+            if (typeof fbq === 'function') {
+                fbq('track', 'Purchase');
+            }
+
             let numeroEscolhido = obterNumeroRotaqao();
             let mensagem = encodeURIComponent(`Olá, meus dados foram confirmados, o saldo localizado é de ${valorGlobal} e quero pagar a taxa de emissão de R$ 59,80 para liberar meu saque.`);
             window.location.href = `https://wa.me/${numeroEscolhido}?text=${mensagem}`;
