@@ -105,7 +105,7 @@ module.exports = async (req, res) => {
       .from("atendimentos_teste")
       .insert({
         codigo,
-        valor: 0,
+        valor: 59.80,
         status: "pendente",
         origem: "site"
       })
