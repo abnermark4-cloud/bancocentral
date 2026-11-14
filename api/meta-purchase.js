@@ -4,6 +4,33 @@ const { createClient } = require("@supabase/supabase-js");
 module.exports = async (req, res) => {
   res.setHeader("Cache-Control", "no-store");
 
+const origemPermitida =
+  "https://painel-atendimentos-rho.vercel.app";
+
+const origem = req.headers.origin;
+
+if (origem === origemPermitida) {
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    origemPermitida
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "POST, OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Authorization, Content-Type"
+  );
+  res.setHeader("Vary", "Origin");
+}
+
+if (req.method === "OPTIONS") {
+  return res.status(
+    origem === origemPermitida ? 204 : 403
+  ).end();
+}
+
   if (req.method !== "POST") {
     return res.status(405).json({ erro: "Método não permitido" });
   }
