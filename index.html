@@ -574,7 +574,70 @@ src="https://www.facebook.com/tr?id=1119253847528378&ev=PageView&noscript=1"
             }
         }
 
-        function dispararWhatsApp(event) {
+        
+async function dispararWhatsApp(event) {
+  event.preventDefault();
+
+  const botao = event.currentTarget;
+  const checkbox = document.getElementById("modal-check");
+
+  if (!checkbox || !checkbox.checked) {
+    alert("Confirme a autorização para continuar.");
+    return;
+  }
+
+  const token = window.turnstile?.getResponse();
+
+  if (!token) {
+    alert("Conclua a verificação de segurança.");
+    return;
+  }
+
+  if (botao.dataset.enviando === "true") return;
+
+  botao.dataset.enviando = "true";
+  botao.style.pointerEvents = "none";
+
+  try {
+    const resposta = await fetch("/api/atendimento", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ token })
+    });
+
+    const resultado = await resposta.json();
+
+    if (!resposta.ok || !resultado.sucesso) {
+      throw new Error(
+        resultado.erro || "Não foi possível registrar"
+      );
+    }
+
+    if (typeof fbq === "function") {
+      fbq("trackCustom", "WhatsAppClick");
+    }
+
+    const numero = "5516981539469";
+
+    const mensagem = encodeURIComponent(
+      "Olá! Gostaria de solicitar uma consultoria. " +
+      "Meu protocolo é " + resultado.codigo
+    );
+
+    window.location.href =
+      `https://wa.me/${numero}?text=${mensagem}`;
+
+  } catch (erro) {
+    alert(erro.message);
+    window.turnstile?.reset();
+  } finally {
+    botao.dataset.enviando = "false";
+    botao.style.pointerEvents = "";
+  }
+}
+ {
             let marcado = document.getElementById('modal-check').checked;
             if (!marcado) {
                 event.preventDefault();
