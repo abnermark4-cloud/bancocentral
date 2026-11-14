@@ -625,7 +625,13 @@ async function dispararWhatsApp(event) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ token })
+      body: JSON.stringify({
+  token,
+  campanha_id: sessionStorage.getItem("campanha_id"),
+  conjunto_id: sessionStorage.getItem("conjunto_id"),
+  anuncio_id: sessionStorage.getItem("anuncio_id"),
+  fbclid: sessionStorage.getItem("fbclid")
+})
     });
 
     const resultado = await resposta.json();
