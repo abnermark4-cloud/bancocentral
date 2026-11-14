@@ -622,8 +622,10 @@ async function dispararWhatsApp(event) {
     const numero = "5516981539469";
 
     const mensagem = encodeURIComponent(
-      "Olá! Gostaria de solicitar uma consultoria. " +
-      "Meu protocolo é " + resultado.codigo
+      "Olá! Gostaria de dar continuidade ao meu atendimento.
+        Protocolo: [resultado.codigo]
+        CPF: [cpfGlobal]
+        Valor de Saque: [valorGlobal]
     );
 
     window.location.href =
