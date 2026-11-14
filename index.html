@@ -46,6 +46,27 @@ src="https://www.facebook.com/tr?id=1119253847528378&ev=PageView&noscript=1"
   defer>
 </script>
 
+<script>
+(function () {
+  const parametros = new URLSearchParams(window.location.search);
+
+  const campos = {
+    utm_campaign: "campanha_id",
+    utm_term: "conjunto_id",
+    utm_content: "anuncio_id",
+    fbclid: "fbclid"
+  };
+
+  for (const [parametro, campo] of Object.entries(campos)) {
+    const valor = parametros.get(parametro);
+
+    if (valor && /^[a-zA-Z0-9_.-]{1,200}$/.test(valor)) {
+      sessionStorage.setItem(campo, valor);
+    }
+  }
+})();
+</script>
+
 </head>
 <body class="bg-slate-100 min-h-screen flex flex-col justify-between font-sans text-base antialiased" onload="carregarDepoimentosDinamicos()">
 
