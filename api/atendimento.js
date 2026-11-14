@@ -113,7 +113,12 @@ module.exports = async (req, res) => {
       .single();
 
     if (error) {
-      console.error("Erro Supabase:", error.code);
+      console.error("Erro Supabase:", {
+  code: error.code,
+  message: error.message,
+  details: error.details,
+  hint: error.hint
+});
       throw new Error("Falha ao registrar atendimento");
     }
 
