@@ -24,7 +24,23 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { token } = req.body || {};
+    const {
+  token,
+  campanha_id,
+  conjunto_id,
+  anuncio_id,
+  fbclid
+} = req.body || {};
+
+const validarId = (valor) =>
+  typeof valor === "string" &&
+  /^\d{1,30}$/.test(valor) ? valor : null;
+
+const validarFbclid = (valor) =>
+  typeof valor === "string" &&
+  /^[A-Za-z0-9_.-]{1,200}$/.test(valor)
+    ? valor
+    : null;
 
     if (
       typeof token !== "string" ||
@@ -104,11 +120,15 @@ module.exports = async (req, res) => {
     const { data, error } = await supabase
       .from("atendimentos_teste")
       .insert({
-        codigo,
-        valor: 59.80,
-        status: "pendente",
-        origem: "site"
-      })
+  codigo,
+  valor: 59.80,
+  status: "pendente",
+  origem: "site",
+  campanha_id: validarId(campanha_id),
+  conjunto_id: validarId(conjunto_id),
+  anuncio_id: validarId(anuncio_id),
+  fbclid: validarFbclid(fbclid)
+})
       .select("codigo")
       .single();
 
