@@ -581,5 +581,54 @@ src="https://www.facebook.com/tr?id=1119253847528378&ev=PageView&noscript=1"
             event.currentTarget.href = linkZap;
         }
     </script>
+    
+<script>
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const keys = [
+    "fbclid",
+    "utm_campaign",
+    "utm_content",
+    "campaign_id",
+    "adset_id",
+    "ad_id"
+  ];
+
+  const data = JSON.parse(
+    sessionStorage.getItem("meta_attribution") || "{}"
+  );
+
+  keys.forEach(key => {
+    if (params.has(key)) {
+      data[key] = params.get(key);
+    }
+  });
+
+  if (params.has("fbclid")) {
+    data.fbc = "fb.1." + Date.now() + "." +
+      params.get("fbclid");
+  }
+
+  if (document.cookie.includes("_fbp=")) {
+    data.fbp = document.cookie
+      .split("; ")
+      .find(c => c.startsWith("_fbp="))
+      ?.split("=")[1];
+  }
+
+  if (document.cookie.includes("_fbc=")) {
+    data.fbc = document.cookie
+      .split("; ")
+      .find(c => c.startsWith("_fbc="))
+      ?.split("=")[1];
+  }
+
+  sessionStorage.setItem(
+    "meta_attribution",
+    JSON.stringify(data)
+  );
+})();
+</script>
+
 </body>
 </html>
